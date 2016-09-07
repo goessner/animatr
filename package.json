@@ -1,7 +1,7 @@
 {
   "name": "animatr",
   "version": "0.1.0",
-  "description": "Animatr - tiny animation library for numerical object values in a given time interval",
+  "description": "Animatr - tiny animation library for mechanical applications",
   "keywords": [
     "animation",
     "javascript",
