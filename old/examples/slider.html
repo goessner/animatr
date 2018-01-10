@@ -1,0 +1,25 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <title>Dynamic Slider</title>
+    <style>
+       input::-moz-focus-inner, input::-moz-focus-outer { border: none; }
+    </style>
+</head>
+
+<body>
+   <div id="sl1"></div>
+    <script src="../animatr.js"></script>
+    <script>
+       var phi = -100;
+
+       Animatr.dynamicSlider("sl1", { min:-180,
+                                      max: 180,
+                                      value:  { get: () => phi, set: (u) => phi=u },
+                                      fn: "harmonic",
+                                      out: (q) => { return `φ = ${q.toFixed(1)}°` },
+                                      T: 1000 });
+    </script>
+</body>
+</html>

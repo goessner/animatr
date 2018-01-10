@@ -1,0 +1,32 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <title>Animatr Kinematics</title>
+</head>
+
+<body>
+    <h1>Animatr Kinematics</h1>
+    <canvas id="c" width="401" height="301"></canvas>
+    <script src="https://gitcdn.xyz/repo/goessner/g2/master/g2.min.js"></script>
+    <script src="https://gitcdn.xyz/repo/goessner/g2-mec/master/g2.mec.min.js"></script>
+    <script src="../animatr.js"></script>
+    <script>
+// render to canvas via g2 ..
+function render() {
+   g2().clr()
+       .rec(rec.x,rec.y,rec.b,rec.h,{ls:"black",fs:"orange",lw:2,ld:[4,4]})
+       .exe(document.getElementById("c").getContext("2d"));
+}
+var rec = {x:100,y:100,b:20,h:100},               // plain javascript rectangle object ... 
+    seq = Animatr.create( [ {value:{get: ()=>rec.x, set: u=>rec.x=u}, to:200},
+                            {value:{get: ()=>rec.y, set: u=>rec.y=u}, delta:50},
+                            {value:{get: ()=>rec.b, set: u=>rec.b=u}, to:120},
+                            {value:{get: ()=>rec.h, set: u=>rec.h=u}, delta:-75},
+                            render ],
+                          { fn:"sinoid", duration:4000, delay:1000 });
+render();
+Animatr.play(seq);
+    </script>
+</body>
+</html>

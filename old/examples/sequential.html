@@ -1,0 +1,55 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <title>Animatr Sequential</title>
+</head>
+
+<body>
+    <h1>Animatr Sequential</h1>
+    <canvas id="c" width="401" height="301"></canvas><br>
+    <button id="btn" onclick="beg();Animatr.play(seq1)">run</button>
+    <script src="https://gitcdn.xyz/repo/goessner/g2/master/g2.min.js"></script>
+    <script src="../animatr.js"></script>
+    <script>
+// initialization and dom attribute morphing ..
+function beg() { 
+   Object.assign(rec,{x:100,y:100,b:20,h:100});
+   document.getElementById("btn").setAttribute("disabled",true);
+}
+function end() {
+   document.getElementById("btn").removeAttribute("disabled");
+}
+// render to canvas via g2 ..
+function render() {
+   g2().clr()
+       .rec(rec.x,rec.y,rec.b,rec.h,{ls:"maroon",lw:2,fs:"orange",ld:[4,4]})
+       .exe(ctx);
+}
+function step(t) {
+   var res1 = seq1.step(t),
+       res2 = seq2.step(t),
+       res3 = seq3.step(t);
+   return res1 || res2 || res3;
+}
+var ctx = document.getElementById("c").getContext("2d"),
+
+    rec = {x:100,y:100,b:20,h:100},               // plain javascript rectangle object ... 
+
+    seq1 = Animatr.create( [ {value:{ get:()=>rec.x, set:(u)=>rec.x=u}, delta:100},
+                             {value:{ get:()=>rec.y, set:(u)=>rec.y=u}, delta: 50},
+                             render ],
+                           { fn:"sinoid", duration:4000, onfinish:() => Animatr.play(seq2) }),
+    seq2 = Animatr.create( [ {value:{ get:()=>rec.b, set:(u)=>rec.b=u}, delta:100},
+                             render ],
+                           { fn:"outQuad", duration:4000, onfinish:() => Animatr.play(seq3) }),
+    seq3 = Animatr.create( [ {value:{ get:()=>rec.h, set:(u)=>rec.h=u}, delta:-50},
+                             render ],
+                           { fn:"inOutQuint", duration:2000, onfinish:end });
+
+beg();
+Animatr.play(seq1);
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,33 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <title>Animatr Draw</title>
+</head>
+
+<body>
+    <h1>Animatr  Draw</h1>
+    <canvas id="c" width="401" height="301"></canvas>
+    <script src="https://gitcdn.xyz/repo/goessner/g2/master/g2.min.js"></script>
+    <script src="https://gitcdn.xyz/repo/goessner/g2-mec/master/g2.mec.min.js"></script>
+    <script src="../animatr.js"></script>
+    <script>
+
+// render to canvas via g2 ..
+var ctx = document.getElementById("c").getContext("2d"),
+    lin = {x:150,y:150,r:100,get len() { return 2*Math.PI*this.r},mu:0}
+//    lin = {x1:10,y1:10,x2:290,y2:290,get len() { return Math.hypot(this.x2-this.x1,this.y2-this.y1)},mu:0 },
+    render = () => {
+       g2().clr()
+//           .lin(lin.x1,lin.y1,lin.x2,lin.y2,{ls:"maroon",lw:2,ld:[lin.mu*lin.len,lin.len]})
+           .cir(lin.x,lin.y,lin.r,{ls:"#6633aa",lw:2,ld:[lin.mu*lin.len,lin.len]})
+           .exe(ctx);
+    },
+    seq = Animatr.create( [ {value:{get: ()=>lin.mu, set: u=>lin.mu=u}, to:1},
+                            render ],
+                          { fn:"sinoid", duration:3000 });
+render();
+Animatr.play(seq);
+    </script>
+</body>
+</html>

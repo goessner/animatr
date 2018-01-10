@@ -1,0 +1,37 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <title>Animatr Kinematics</title>
+</head>
+
+<body>
+    <h1>Animatr Kinematics</h1>
+    <canvas id="c" width="801" height="201"></canvas>
+    <script src="https://gitcdn.xyz/repo/goessner/g2/master/g2.min.js"></script>
+    <script src="https://gitcdn.xyz/repo/goessner/g2-mec/master/g2.mec.min.js"></script>
+    <script src="../animatr.js"></script>
+    <script>
+// render to canvas via g2 ..
+function render() {
+   g2().clr()
+       .cartesian()
+       .cir(cir.x,cir.y,cir.r,{ls:"black",fs:"orange",lw:2})
+       .vec(cir,{dx:cir.xt,dy:0},{ls:"green"}).label("vel","end")
+       .vec(cir,{dx:cir.xtt,dy:0},{ls:"maroon"}).label("acc","end")
+       .exe(ctx);
+}
+var ctx = document.getElementById("c").getContext("2d"),
+    cir = {x:50,y:100,r:20,xt:1,xtt:1},       // plain javascript circle object ... 
+    seq = Animatr.create( [ { value: { get: ()=> cir.x, 
+                                       set: u => cir.x=u,
+                                       setvel: u => cir.xt=u,
+                                       setacc: u => cir.xtt=u }, 
+                              to: 350 },
+                            render ],
+                          { fn:"outCubic", duration:4000, delay:1000 });
+render();
+Animatr.play(seq);
+    </script>
+</body>
+</html>

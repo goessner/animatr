@@ -1,0 +1,180 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <title>Dynamic Fourbar</title>
+</head>
+
+<body>
+    <h1>Dynamic Fourbar</h1>
+    <canvas id="cnv" width="401" height="401" style="border:1px solid black"></canvas><br>
+    <div id="phi"></div>
+    <div id="a"></div>
+    <div id="b"></div>
+    <div id="c"></div>
+    <div id="d"></div>
+    <script src="https://gitcdn.xyz/repo/goessner/v2/master/v2.min.js"></script>
+    <script src="../../g2/g2.js"></script>
+    <script src="https://gitcdn.xyz/repo/goessner/g2-mec/master/g2.mec.min.js"></script>
+    <script src="../animatr.js"></script>
+    <script>
+var pi = Math.PI,
+    ctx = document.getElementById("cnv").getContext("2d"),
+    mec = {
+       A0: {x:100, y:100},
+       B0: null,
+       A: null,
+       C: null,
+       Cb: null,
+       a: 50,
+       a: 50,
+       b: 200,
+       c: 200,
+       d: 200,
+       nu: 0.8, kappa:0.2,
+       phi: 0, phit:0, phitt:0,
+       theta: 0, thetat: 0, thetatt: 0, 
+       psi: 0, psit: 0, psitt: 0,
+       ea: null,
+       eb: null,
+       ec: null,
+       crv: null,
+       grashof: false,
+       color: "darkslategray",
+       linkstyle: {ls:"darkslategray",lw:5,lj:"round"},
+       jointstyle: {ls:"darkslategray",lw:3,fs:"#ddd"},
+       geo: function() {
+          var sum = this.a+this.b+this.c+this.d,
+              min = Math.min(this.a,this.b,this.c,this.d),
+              max = Math.max(this.a,this.b,this.c,this.d),
+              phicur = this.phi;
+          this.grashof = 2*min + 2*max <= sum;
+          this.B0 = {x:this.d,y:0};
+
+          // coupler curve generation ...
+          this.crv = [];
+          for (var ph=0, dph=pi/60; ph<2*pi; ph+=dph) {
+              this.phi = ph;
+              this.pos();
+              this.crv.push(this.C);
+          }
+          this.phi = phicur;
+       },
+       pos: function() {
+          var cph = Math.cos(this.phi), sph = Math.sin(this.phi),
+              gx = this.d - this.a*cph, gy = -this.a*sph, gg = gx*gx + gy*gy,
+              bbgg = this.b*this.b/gg,
+              lam = (bbgg - this.c*this.c/gg + 1)/2,
+              mumu = bbgg - lam*lam,
+              broken = mumu < 0,
+              mu = !broken ? Math.sqrt(mumu) : 0,
+              cps = ((lam-1)*gx - mu*gy)/this.c, sps = ((lam-1)*gy + mu*gx)/this.c,
+              cth = (lam*gx - mu*gy)/this.b, sth = (lam*gy + mu*gx)/this.b,
+              eb = broken ? v2.iunit({x:cth,y:sth}) : {x:cth,y:sth},
+              ec = broken ? v2.iunit({x:cps,y:sps}) : {x:cps,y:sps};
+          this.psi = Math.atan(sps,cps);
+          this.theta = Math.atan(sth,cth);
+          this.ra = {x:this.a*cph,y:this.a*sph};
+          this.rb = v2.scl(eb,this.b);
+          this.rc = v2.scl(ec,this.c);
+          this.A = this.ra;
+          this.B = v2.sum(this.B0,this.rc);
+          this.C = v2.sum(this.B,v2.simtrf(this.rb,(this.nu-1),this.kappa));
+          this.Cb= v2.sum(this.B,v2.scl(this.rb,this.nu-1));
+/*
+          this.B = {x:this.d+this.c*this.eps.x,y:this.c*this.eps.y};
+          this.A = {x:this.a*cph,y:this.a*sph};
+          this.B = {x:this.d+this.c*this.eps.x,y:this.c*this.eps.y};
+          this.C = {x:this.B.x - this.b*((1-this.nu)*this.eth.x+this.kappa*this.eth.y), 
+                    y:this.B.y - this.b*((1-this.nu)*this.eth.y-this.kappa*this.eth.x)};
+          this.Cb = {x:this.B.x - this.b*((1-this.nu)*this.eth.x), 
+                     y:this.B.y - this.b*((1-this.nu)*this.eth.y)};
+*/
+          g2.State.linkcolor = this.grashof ? "darkslategray" 
+                              : broken ? "orangered" : "maroon";
+       },
+       vel: function() {
+           var rc_perp_rb = v2.perp(this.rc,this.rb),
+               thetas  = v2.perp(this.ra,this.rc)/rc_perp_rb,
+               psis    = v2.perp(this.ra,this.rb)/rc_perp_rb,
+               rtmp    = v2.dif(v2.sum(this.ra,v2.scl(this.rb,thetas*thetas)),v2.scl(this.rc,psis*psis)),
+               thetass = -v2.dot(rtmp,this.rc)/rc_perp_rb,
+               psiss   = -v2.dot(rtmp,this.rb)/rc_perp_rb;
+           this.thetat = thetas*this.phit;
+           this.thetatt = thetas*this.phitt + thetass*this.phit*this.phit;
+           this.psit = psis*this.phit;
+           this.psitt = psis*this.phitt + psiss*this.phit*this.phit;
+       },
+       calc: function() {
+           this.pos();
+       },
+       render: function() {
+          g2().clr()
+              .cartesian()
+              .ply(this.crv,true,{fs:"orange"})
+              .pan(this.A0.x,this.A0.y)
+              .bar(v2.zero,this.A)
+              .bar(this.B0,this.B)
+              .bar(this.B,v2.dif(this.B,this.rb))
+              .bar(this.Cb,this.C)
+              .use("nod",this.A).label("A","nw")
+              .use("nod",this.B).label("B","ne")
+              .use("nod",this.C).label("C","n")
+              .use("nodfix",v2.zero).label("A0","w")
+              .use("nodfix",this.B0).label("B0","e")
+              .exe(ctx);
+       }
+    };
+
+Animatr.dynamicSlider("phi", { min: 0,
+                               max: 360,
+                               value:  { 
+                                  get: () => mec.phi/pi*180, 
+                                  set: (u) => { mec.phi=u*pi/180; mec.pos(); },
+                                  setvel: (u) => { mec.phit=u*pi/180; mec.vel(); mec.render(); }
+                               },
+//                               fn: "harmonic",
+                               out: (q) => { return `φ = ${q.toFixed(0)}°` },
+                               T: 1500 });
+Animatr.dynamicSlider("a", { min: 15,
+                             max: 100,
+                             value:  { 
+                                get: () => mec.a,
+                                set: (u) => { mec.a=u; mec.geo(); mec.calc(); mec.render(); }
+                             },
+                             fn: "harmonic",
+                             out: (q) => { return `a = ${q.toFixed(0)} units` },
+                             T: 1500 });
+Animatr.dynamicSlider("b", { min: 80,
+                             max: 250,
+                             value:  { 
+                                get: () => mec.b,
+                                set: (u) => { mec.b=u; mec.geo(); mec.calc(); mec.render(); }
+                             },
+                             fn: "harmonic",
+                             out: (q) => { return `b = ${q.toFixed(0)} units` },
+                             T: 1500 });
+Animatr.dynamicSlider("c", { min: 80,
+                             max: 250,
+                             value:  { 
+                                get: () => mec.c,
+                                set: (u) => { mec.c=u; mec.geo(); mec.calc(); mec.render(); }
+                             },
+                             fn: "harmonic",
+                             out: (q) => { return `c = ${q.toFixed(0)} units` },
+                             T: 1500 });
+Animatr.dynamicSlider("d", { min: 80,
+                             max: 250,
+                             value:  { 
+                                get: () => mec.d,
+                                set: (u) => { mec.d=u; mec.geo(); mec.calc(); mec.render(); }
+                             },
+                             fn: "harmonic",
+                             out: (q) => { return `d = ${q.toFixed(0)} units` },
+                             T: 1500 });
+mec.geo();
+mec.calc();
+mec.render();
+    </script>
+</body>
+</html>

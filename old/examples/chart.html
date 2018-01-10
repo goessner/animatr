@@ -1,0 +1,61 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <title>Animatr functions</title>
+</head>
+
+<body>
+    <h1>Animatr functions</h1>
+    <canvas id="c" width="1001" height="851"></canvas>
+    <script src="https://gitcdn.xyz/repo/goessner/g2/master/g2.min.js"></script>
+    <script src="https://gitcdn.xyz/repo/goessner/g2-chart/master/g2.chart.min.js"></script>
+    <script src="../animatr.js"></script>
+    <script>
+
+   function timingFn(fn,fnName,opts) {
+       opts = opts || {};
+       return g2().rec(0,0,150,255,{ls:"black",fs:"#fefefe",sh:[5,5,3,"rgba(0,0,0,0.5)"]})
+                       .chart({ x:40,y:10,b:100,h:50,
+                                xmin:0,xmax:1,
+                                funcs:[{fn:fn.f, dx:0.02, fill:true}],
+                                xaxis:false,
+                                yaxis:{title:"f"}})
+                       .chart({ x:40,y:80,b:100,h:60,
+                                xmin:0,xmax:1,
+                                ymin:opts.fdymin,ymax:opts.fdymax,
+                                funcs:[{fn:fn.fd, dx:0.02, color:1, fill:true}],
+                                xaxis:false,
+                                yaxis:{title:"f '",origin:true}})
+                       .chart({ x:40,y:160,b:100,h:70,
+                                title:{text:fnName},
+                                xmin:0,xmax:1,
+                                ymin:opts.fddymin,ymax:opts.fddymax,
+                                funcs:[{fn:fn.fdd, dx:0.002, color:2, fill:true}],
+                                xaxis:false,
+                                yaxis:{title:"f ''",origin:true}});
+   }
+   var  x, y, xmin = 10, ymax = 851, dx = 160, dy = 270;
+   g2().cartesian()
+       .use(timingFn(Animatr.linear,"linear",{fdymin:0,fdymax:1.5,fddymin:-1,fddymax:1}),{x:(x=xmin),y:(y=ymax-dy-20)})
+       .use(timingFn(Animatr.quadratic,"quadratic"),{x:(x+=dx),y:y})
+       .use(timingFn(Animatr.harmonic,"harmonic"),{x:(x+=dx),y:y})
+       .use(timingFn(Animatr.sinoid,"sinoid"),{x:(x+=dx),y:y})
+       .use(timingFn(Animatr.poly5,"poly5"), {x:(x+=dx),y:y})
+       .use(timingFn(Animatr.ramp(1/4),"ramp(1/4)"), {x:(x+=dx),y:y})
+       .use(timingFn(Animatr.inPot(2),"inQuad",{fddymin:0,fddymax:2.5}),{x:(x=xmin),y:(y-=dy)})
+       .use(timingFn(Animatr.outPot(2),"outQuad",{fddymin:-2.5,fddymax:0}),{x:(x+=dx),y:y})
+       .use(timingFn(Animatr.inOutPot(2),"inOutQuad"),{x:(x+=dx),y:y})
+       .use(timingFn(Animatr.inPot(3),"inCubic"),{x:(x+=dx),y:y})
+       .use(timingFn(Animatr.outPot(3),"outCubic"),{x:(x+=dx),y:y})
+       .use(timingFn(Animatr.inOutPot(3),"inOutCubic"),{x:(x+=dx),y:y})
+       .use(timingFn(Animatr.inPot(4),"inQuart"),{x:(x=xmin),y:(y-=dy)})
+       .use(timingFn(Animatr.outPot(4),"outQuart"),{x:(x+=dx),y:y})
+       .use(timingFn(Animatr.inOutPot(4),"inOutQuart"),{x:(x+=dx),y:y})
+       .use(timingFn(Animatr.inPot(5),"inQuint"),{x:(x+=dx),y:y})
+       .use(timingFn(Animatr.outPot(5),"outQuint"),{x:(x+=dx),y:y})
+       .use(timingFn(Animatr.inOutPot(5),"inOutQuint"),{x:(x+=dx),y:y})
+       .exe(document.getElementById("c").getContext("2d"));
+    </script>
+</body>
+</html>

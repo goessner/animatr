@@ -1,0 +1,52 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <title>go</title>
+</head>
+
+<body>
+    <h1>go</h1>
+    <div id="rec" style="position:absolute;left:100px;top:100px;width:20px;height:100px;border:2px dashed black;background-color:orange;"></div>
+    <script src="../animatr.js"></script>
+    <script>
+
+const go = {
+    animators: [],
+    rafId: null,
+    begTime: 0,
+    animate: function(animator) {
+        if (typeof animator === "function") {
+            go.animators.push(animator);
+        }
+        else if (Array.isArray(animator)) {
+            for (let a of animator)
+                go.animators.push(a);
+        }
+        return go;
+    },
+    step: function(time) {
+        let busy = false;
+        if (!go.t0) go.t0 = time;
+    console.log("!")
+        for (let animator of go.animators)
+           if (!animator.done)
+              busy = !(animator.done = !animator(time-go.t0)) || busy;
+        if (busy)
+           requestAnimationFrame(go.step);
+    },
+    play: function() {
+        requestAnimationFrame(go.step);
+    },
+}
+
+// render to canvas via g2 ..
+var elstyle = document.getElementById("rec").style,
+    an1 = () => { let val = parseFloat(elstyle.left) + 1; elstyle.left = val + "px"; return val < 300; },
+    an2 = () => { let val = parseFloat(elstyle.top) + 1; elstyle.top = val + "px"; return val < 350; },
+    an3 = () => { let val = parseFloat(elstyle.width) + 1; elstyle.width = val + "px"; return val < 120; };
+
+go.animate([an1,an2,an3]).play();
+    </script>
+</body>
+</html>

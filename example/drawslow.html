@@ -1,0 +1,48 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <title>g2 - draw slow</title>
+</head>
+
+<body>
+    <h1>g2 - draw slow</h1>
+    <canvas id="c" width="301" height="201"></canvas>
+    <script src='../g2.js'></script>
+    <script src='../animatr.js'></script>
+    <script>
+
+g2.symbol.nodcolor = "#333";
+g2.symbol.nodfill  = "#dedede";
+g2.symbol.nodfill2 = "#aeaeae";
+g2.symbol.linkcolor = "#666";
+g2.symbol.linkfill = "rgba(200,200,200,0.5)";
+g2.symbol.nodfix = g2().p()
+                       .m({x:-8,y:-12})
+                           .l({x:0,y:0})
+                           .l({x:8,y:-12})
+                       .drw({ls:"@nodcolor",fs:"@nodfill2"})
+                       .cir({x:0,y:0,r:4,ls:"@nodcolor",fs:"@nodfill"});
+
+const ani = animatr,
+      ctx = document.getElementById("c").getContext("2d"),
+      pi = Math.PI,
+      T0 = performance.now();
+
+let   T = 0,
+      g = g2().clr()
+              .cartesian()
+              .grid()
+              .lin({x1:20,y1:20,x2:ani([[0,20],'poly5',[3,280],,[6,150]]),y2:ani([[0,20],'poly5',[3,180],,[6,100]]),ls:'#80000080',lw:2})
+              .lin({x1:20,y1:180,x2:ani([[4,20],'poly5',[7,280]]),y2:ani([[4,180],,[7,20]]),ls:'green',lw:2})
+              .cir({x:20,y:180,r:10,fs:ani([[3,0],,[4,255]],hexrgba('#800000'))})
+              .use({grp:'nodfix',x:280,y:180,w:ani([[0,2*pi],,[2,0]]),scl:ani([[0,0],,[2,1]])})
+
+g2.render((t)=> {
+    T = animatr.T = (t - T0)/1000;
+    g.exe(ctx);
+    return T < 8;
+});
+</script>
+</body>
+</html>

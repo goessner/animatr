@@ -1,3 +1,3 @@
-# Animatr
+# animatr
 
 -- todo --

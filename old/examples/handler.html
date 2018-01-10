@@ -1,0 +1,25 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <title>Handler</title>
+</head>
+
+<body>
+    <h1>Handler</h1>
+    <script>
+var on = {
+   get play() { return this._play || []; },
+   set play(hdl) { (this._play || (this._play = [])).push(hdl); },
+   get pause() { return this._pause || []; },
+   set pause(hdl) { (this._pause || (this._pause = [])).push(hdl); }
+};
+
+on.play = (t)=>{console.log("playing .. 1")};
+on.play = (t)=>{console.log("playing .. 2")};
+
+for (let hdl of on.play)
+   hdl();
+    </script>
+</body>
+</html>

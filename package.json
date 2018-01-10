@@ -1,7 +1,7 @@
 {
   "name": "animatr",
-  "version": "0.1.0",
-  "description": "Animatr - tiny animation library for mechanical applications",
+  "version": "0.5.0",
+  "description": "animatr - tiny animation library for mechanical applications",
   "keywords": [
     "animation",
     "javascript",
@@ -10,16 +10,12 @@
     "canvas"
   ],
   "main": "animatr.js",
-  "scripts": {
-  },
+  "scripts": {},
   "author": "Stefan Goessner <fang03@web.de>",
   "repository": {
     "type": "git",
     "url": "https://github.com/goessner/animatr.git"
   },
   "license": "MIT",
-  "devDependencies": {
-    "jsdoc-to-markdown": "^1.3.2",
-    "uglifyjs": "^2.4.10"
-  }
+  "devDependencies": {}
 }
