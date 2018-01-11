@@ -8,7 +8,7 @@
 <body>
     <h1>g2 - draw slow</h1>
     <canvas id="c" width="301" height="201"></canvas>
-    <script src='../g2.js'></script>
+    <script src='../../g2new/g2.js'></script>
     <script src='../animatr.js'></script>
     <script>
 
@@ -35,7 +35,7 @@ let   T = 0,
               .grid()
               .lin({x1:20,y1:20,x2:ani([[0,20],'poly5',[3,280],,[6,150]]),y2:ani([[0,20],'poly5',[3,180],,[6,100]]),ls:'#80000080',lw:2})
               .lin({x1:20,y1:180,x2:ani([[4,20],'poly5',[7,280]]),y2:ani([[4,180],,[7,20]]),ls:'green',lw:2})
-              .cir({x:20,y:180,r:10,fs:ani([[3,0],,[4,255]],hexrgba('#800000'))})
+              .cir({x:20,y:180,r:10,fs:ani([[3,0],,[4,255]],ani.hexrgba('#800000'))})
               .use({grp:'nodfix',x:280,y:180,w:ani([[0,2*pi],,[2,0]]),scl:ani([[0,0],,[2,1]])})
 
 g2.render((t)=> {

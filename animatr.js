@@ -31,9 +31,11 @@ const animatr = function(v,trf) {
         return trf ? trf(q) : q;
     }
 }
+
 // timing functions
 animatr.linear = q => q
 animatr.quadratic = q => q <= 0.5 ? 2*q*q : -2*q*q + 4*q - 1
 animatr.poly5 = q => 10*q*q*q - 15*q*q*q*q + 6*q*q*q*q*q
 // transform functions
 animatr.hexrgba = color => q => color + (q < 16 ? '0' : '') + Math.floor(q).toString(16)
+
